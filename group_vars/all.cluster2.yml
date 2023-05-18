@@ -1,0 +1,203 @@
+---
+### Environment ###########
+out_path: /root/zvm
+workdir: /root/ocp
+bootfile_dest: "{{workdir}}" 
+
+############ z/VM Settings ##########
+load_address: 100
+install_mode: "zvm"
+guest_profile: "LNXDFLT"
+zvm_vsw_name: "VSWITCH1"
+
+### For NFS persistent Storage
+nfs_server: "9.76.62.150"
+nfs_share_folder: "/nfs_share"
+
+############ OCP ##########
+
+### Pull-secret
+path_ps: "/root/ansible_on_linuxone_rdbk/test1_pull_secret"
+ocp4_pull_secret: "{{ lookup('file', path_ps) | from_json }}"
+
+### OCP parameters
+controller_schedulable: false
+cluster_name: "zvm2"
+cluster_base_domain: "rdbk.com"
+cluster_domain_name: "{{cluster_name}}.{{cluster_base_domain}}"
+dns_nameserver: "9.76.62.146"
+dns_hostname: "dns1"
+haproxy_server: "9.76.62.145"
+subnet_gateway: "9.76.62.1"
+subnet_netmask: "255.255.255.0"
+subnet_cidr: "9.76.62.0/24"
+bastion_public_ip_address: "9.76.62.150"
+bastion_private_ip_address: "9.76.62.150"
+ocp_repo_type: "Online"
+ocp_idp: "RDBK2_HTPASSWD"
+ocp_idp_users_secret: "users-secret" 
+ocp_version: "4.12"
+ocp_minor_version: "4.12.10"
+rhcos_version: "4.12.10-s390x"
+
+cluster_nodes: {
+  bootstrap: [
+    { hostname: "ocp2b0",
+      ip: "9.76.62.160",
+      ign_profile: "bootstrap.ign",
+      vm_uname: "OCP2B0",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G",
+      install_mode: "zvm",
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      vm_agent: "9.76.62.149"
+      }],
+  masters: [ 
+    { hostname: "ocp2m1",
+      ip: "9.76.62.151",
+      ign_profile: "master.ign",
+      vm_uname: "OCP2M1",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G", 
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      vm_agent: "9.76.62.149"
+      },
+    { hostname: "ocp2m2",
+      ip: "9.76.62.152",
+      ign_profile: "master.ign",
+      vm_uname: "OCP2M2",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G",  
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      vm_agent: "9.76.62.149"
+    },
+    { hostname: "ocp2m3",
+      ip: "9.76.62.153",
+      ign_profile: "master.ign",
+      vm_uname: "OCP2M3",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G",  
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      vm_agent: "9.76.62.149"
+      }],
+  workers: [
+    {hostname: "ocp2w1",
+     ip: "9.76.62.154",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP2W1",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G",  
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     vm_agent: "9.76.62.149"
+     },
+    {hostname: "ocp2w2",
+     ip: "9.76.62.155",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP2W2",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G",  
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     vm_agent: "9.76.62.149"
+     },
+     {hostname: "ocp2f1",
+     ip: "9.76.62.156",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP2F1",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G", 
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     vm_agent: "9.76.62.149"
+     },
+     {hostname: "ocp2f2",
+     ip: "9.76.62.157",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP2F2",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "50150",
+      vol_grp: "DASD400",
+      vcpu: 4,
+      min_mem: "24G",
+      max_mem: "256G", 
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     vm_agent: "9.76.62.149"
+     },
+     ]}
+
+### Usually no need to update below variables
+
+### For disk and network
+zvm_rd_znet: "rd.znet=qeth,0.0.1000,0.0.1001,0.0.1002,layer2=1,portno=0"
+dev_disk:
+  zvm: /dev/dasda
+  zkvm: vda
+coreos_kargs_net:
+  zvm: "ip={{ item.ip }}::{{ subnet_gateway }}:{{ subnet_netmask }}:::none nameserver={{ dns_nameserver }}"
+  zkvm: "ip={{ item.ip }}::{{ subnet_gateway }}:{{ subnet_netmask }}:::none nameserver={{ dns_nameserver }}"
+coreos_kargs_extra:
+  zvm:  "{{ zvm_rd_znet }}"
+  zkvm: "rd.neednet=1 dfltcc=off coreos.inst=yes coreos.inst.install_dev=vda coreos.live.rootfs_url=http://{{bastion_private_ip_address}}:8080/rootfs/{{ rhcos_disk_image_short }} {{ coreos_kargs_net[install_mode] }}  coreos.inst.ignition_url=http://{{bastion_private_ip_address}}:8080/ignition/{{ item.ign_profile }}"
+
+### OCP version
+rhcos_download_url: "https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/{{ocp_version}}/{{ocp_minor_version}}"
+openshift_install_binary_url: "https://mirror.openshift.com/pub/openshift-v4/s390x/clients/ocp/{{ocp_minor_version}}"
+openshift_install_cli: "openshift-install-linux-{{ocp_minor_version}}.tar.gz"
+openshift_client_cli: "openshift-client-linux-{{ocp_minor_version}}.tar.gz"
+rhcos_installer_kernel: "rhcos-{{rhcos_version}}-live-kernel-s390x"
+rhcos_installer_initramfs: "rhcos-{{rhcos_version}}-live-initramfs.s390x.img"
+rhcos_disk_image: "rhcos-{{rhcos_version}}-live-rootfs.s390x.img"
+rhcos_disk_image_short: "{{ocp_minor_version}}.rootfs.img"
+rhcos_rootfs_files: "{{ rhcos_disk_image }}"
+subnet_in_addr_name: "{{ subnet_cidr.split('.')[:3] | reverse | join('.') }}"
+
+#####  END of OCP   ########

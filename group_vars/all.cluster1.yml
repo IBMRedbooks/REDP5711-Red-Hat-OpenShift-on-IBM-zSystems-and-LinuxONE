@@ -1,0 +1,213 @@
+---
+ansible_client_id: zadmin
+
+out_path: ~/tmp
+
+zvmguests_output:  /tmp/zvmguests
+workdir: /home/zadmin/ocp
+
+guest_profile: "LNXDFLT"
+load_address: 100
+dns_server: 9.76.62.130
+dns_suffix: rdbk.com
+
+
+vmlist: [""]
+
+###
+zvm_vsw_name: VSWITCH1
+nfs_server: "9.76.62.130"
+
+############ OCP ##########
+dev_disk:
+  zvm: /dev/dasda
+  zkvm: vda
+coreos_kargs_net:
+  zvm: "ip={{ item.ip }}::{{ subnet_gateway }}:{{ subnet_netmask }}:::none nameserver={{ dns_nameserver }}"
+  zkvm: "ip={{ item.ip }}::{{ subnet_gateway }}:{{ subnet_netmask }}:::none nameserver={{ bastion_private_ip_address }}"
+coreos_kargs_extra:
+  zvm:  "{{ zvm_rd_znet }}"
+  zkvm: "rd.neednet=1 dfltcc=off coreos.inst=yes coreos.inst.install_dev=vda coreos.live.rootfs_url=http://{{bastion_private_ip_address}}:8080/rootfs/{{ rhcos_disk_image_short }} {{ coreos_kargs_net[install_mode] }}  coreos.inst.ignition_url=http://{{bastion_private_ip_address}}:8080/ignition/{{ item.ign_profile }}"
+
+zvm_rd_znet: "rd.znet=qeth,0.0.1000,0.0.1001,0.0.1002,layer2=1,portno=0"
+
+path_ps: "/data/ansible_on_linuxone_rdbk/test1_pull_secret"
+ocp4_pull_secret: "{{ lookup('file', path_ps) | from_json }}"
+controller_schedulable: false
+cluster_name: "zvm"
+cluster_base_domain: "rdbk.com"
+cluster_domain_name: "{{cluster_name}}.rdbk.com"
+dns_nameserver: "9.76.62.130"
+subnet_gateway: "9.76.62.1"
+subnet_netmask: "255.255.255.0"
+subnet_cidr: "9.76.62.0/24"
+bastion_public_ip_address: "9.76.62.130"
+bastion_private_ip_address: "9.76.62.130"
+load_address: 100
+cluster_nodes: {
+  bootstrap: [
+    { hostname: "ocp1b0",
+      ip: "9.76.62.140",
+      ign_profile: "bootstrap.ign",
+      vm_uname: "OCP1B0",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54",
+      install_mode: "zvm",
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      #vm_agent: "localhost"
+      vm_agent: "9.76.62.149"
+      }],
+  masters: [ 
+    { hostname: "ocp1m1",
+      ip: "9.76.62.131",
+      ign_profile: "master.ign",
+      vm_uname: "OCP1M1",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54",
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      #vm_agent: "localhost"
+      vm_agent: "9.76.62.149"
+      },
+    { hostname: "ocp1m2",
+      ip: "9.76.62.132",
+      ign_profile: "master.ign",
+      vm_uname: "OCP1M2",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54", 
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      #vm_agent: "localhost"
+      vm_agent: "9.76.62.149"
+    },
+    { hostname: "ocp1m3",
+      ip: "9.76.62.133",
+      ign_profile: "master.ign",
+      vm_uname: "OCP1M3",
+      eckd_disk: ["rd.dasd=0.0.0100"],
+      install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54", 
+      kvm_network: "",
+      vm_node: "RDBKZVMD",
+      #vm_agent: "localhost"
+      vm_agent: "9.76.62.149"
+      }],
+  workers: [
+    {hostname: "ocp1w1",
+     ip: "9.76.62.134",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP1W1",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54", 
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     #vm_agent: "localhost"
+     vm_agent: "9.76.62.149"
+     },
+    {hostname: "ocp1w2",
+     ip: "9.76.62.135",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP1W2",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54", 
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     #vm_agent: "localhost"
+     vm_agent: "9.76.62.149"
+     },
+    {hostname: "ocp1w3",
+     ip: "9.76.62.136",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP1W3",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54",
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     #vm_agent: "localhost"
+     vm_agent: "9.76.62.149"
+     },
+    {hostname: "ocp1f1",
+     ip: "9.76.62.137",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP1F1",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54",
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     #vm_agent: "localhost"
+     vm_agent: "9.76.62.149"
+     },
+    {hostname: "ocp1f2",
+     ip: "9.76.62.138",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP1F2",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54",
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     #vm_agent: "localhost"
+     vm_agent: "9.76.62.149"
+     },
+     {hostname: "ocp1f3",
+     ip: "9.76.62.139",
+     ign_profile: "worker.ign",
+     vm_uname: "OCP1F3",
+     eckd_disk: ["rd.dasd=0.0.0100"],
+     install_mode: "zvm",
+      vol_type: "3390",
+      vol_size: "60101",
+      vol_grp: "DASD54",
+     kvm_network: "",
+     vm_node: "RDBKZVMD",
+     #vm_agent: "localhost"
+     vm_agent: "9.76.62.149"
+     },
+     ]}
+ocp_minor_version: "4.12.10"
+rhcos_version: "4.12.10-s390x"
+ocp_version: "4.12"
+rhcos_download_url: "https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/{{ocp_version}}/{{ocp_minor_version}}"
+openshift_install_binary_url: "https://mirror.openshift.com/pub/openshift-v4/s390x/clients/ocp/{{ocp_minor_version}}"
+openshift_install_cli: "openshift-install-linux-{{ocp_minor_version}}.tar.gz"
+openshift_client_cli: "openshift-client-linux-{{ocp_minor_version}}.tar.gz"
+rhcos_installer_kernel: "rhcos-{{rhcos_version}}-live-kernel-s390x"
+rhcos_installer_initramfs: "rhcos-{{rhcos_version}}-live-initramfs.s390x.img"
+rhcos_disk_image: "rhcos-{{rhcos_version}}-live-rootfs.s390x.img"
+rhcos_disk_image_short: "{{ocp_minor_version}}.rootfs.img"
+rhcos_rootfs_files: "{{ rhcos_disk_image }}"
+ocp_idp: "RDBK_HTPASSWD"
+ocp_idp_users_secret: "users-secret" 
+nfs_share_folder: "/nfs_share"
+subnet_in_addr_name: "{{ subnet_cidr.split('.')[:3] | reverse | join('.') }}"
+install_mode: "zvm"
+ocp_repo_type: "Online"
+
+
+infra_nodes: ["ocpf1.{{cluster_domain_name}}","ocpf2.{{cluster_domain_name}}","ocpf3.{{cluster_domain_name}}"]
+#####  END of OCP   ########
